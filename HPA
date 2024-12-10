@@ -1,0 +1,54 @@
+After installing the metric server 
+
+create a deployment with resources 
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-deployment
+  labels:
+    app: my-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: my-container
+        image: nginx:latest
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+
+kubectl create -f deploy.yaml 
+deployment.apps/my-deployment created
+
+
+kubectl autoscale deployment deploymentname --cpu-percent=50 --min=1 --max=10
+
+horizontalpodautoscaler.autoscaling/my-deployment autoscaled
+
+
+
+dd if=/dev/zero of=/dev/null & --> inside the pod to increase the work load of the pod to increase 
+
+
+now check whether the pods are scaled or not
+
+kubectl get po -w
+NAME                             READY   STATUS    RESTARTS   AGE
+my-deployment-79c4675fd8-bs2pn   1/1     Running   0          3m1s
+my-deployment-79c4675fd8-zqvf4   1/1     Running   0          3m1s
+my-deployment-79c4675fd8-4wnhr   0/1     Pending   0          0s
+my-deployment-79c4675fd8-g465c   0/1     Pending   0          0s
+my-deployment-79c4675fd8-4wnhr   0/1     Pending   0          0s
+my-deployment-79c4675fd8-g465c   0/1     Pending   0          0s
